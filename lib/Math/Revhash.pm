@@ -138,86 +138,92 @@ This module is intended for fast and lightweight numbers reversible hashing.
 Say there are millions of entries inside RDBMS and each entry identified with
 sequential primary key.
 Sometimes we want to expose this key to users, i.e. in case it is a session ID.
-Due to multiple reasons it could be a good idea to hide from the outer world
+Due to several reasons it could be a good idea to hide from the outer world
 that those session IDs are just a generic sequence of integers.
 This module will perform fast, lightweight and reversible translation between
 simple sequence C<1, 2, 3, ...> and something like C<3287, 8542, 1337, ...>
 without need for hash-table lookups, large memory storage and any other
-expensive things.
+expensive mechanisms.
 
 So far, this module is only capable of translating positive non-zero integers.
 To use the module you can either choose one of existing hash lengths: 1..9, or
-specify any positive C<$length> with non-default C<$A> parameter.
-In any case C<data> for hashing should not exceed predefined hash length.
+specify any positive C<$length> with non-default C<$A> parameter (see below).
+In any case C<$number> for hashing should not exceed predefined hash length.
 C<$B> parameter could also be specified to avoid extra modular inverse
 calculation.
 
-=head1 SUBROUTINES/METHODS
+=head1 SUBROUTINES
 
-=head2 revhash($number, $length, $A, $B, $C)
+=head2 revhash
+
+Compute C<$hash = revhash($number, $length, $A, $B, $C)>
 
 =over 4
 
-=item C<$number> --
+=item C<$number> is the source number to be hashed.
 
-the number to be hashed.
+=item C<$length> is required hash length in digits.
 
-=item C<$length> --
+=item C<$A> I<(optional for pre-defined lengths)>
 
-required hash length.
-
-=item C<$A> --
-
-I<(optional for pre-defined lengths)> a parameter of hash function.
+It is just a parameter of hash function.
 There are some hard-coded C<$A> values for pre-defined lengths.
 You are free to specify any positive C<$A> to customize the function.
 It is recommended to choose only primary numbers for C<$A> to avoid possible
 collisions.
 C<$A> should not be too short or too huge digit number.
-It's recommended to start with any primary number close to C<10 ** ($len + 1)>.
+It is recommended to start with any primary number close to
+C<10 ** ($length + 1)>.
 You are encouraged to play around it on your own.
 
-=item C<$B> --
+=item C<$B> I<(optional)>
 
-I<(optional)> modular inverse of C<$A>:
+Second parameter of hash function. It is a modular inverse of C<$A> and is
+being computed as C<< $B = Math::BigInt->bmodinv($A, 10 ** $length) >> unless
+explicitly specified.
 
-    $B = Math::BigInt->bmodinv($A, 10 ** $length)
+=item C<$C> I<(optional)>
 
-=item C<$C> --
-
-I<(optional)> as our numbers are decimal, C<10> to the power of C<$length>:
-
-    $C = 10 ** $length
+Third parameter of hash function. As our numbers are decimal it is just C<10>
+to the power of C<$length>: C<$C = 10 ** $length>.
 
 =back
 
-=head2 revunhash($hash, $length, $A, $B, $C)
+=head2 revunhash
+
+Compute C<$number = revunhash($hash, $length, $A, $B, $C)>.
+It takes the same arguments as C<revhash> besides:
 
 =over 4
 
-=item C<$hash> --
-
-hash value that should be translated back to a number.
+=item C<$hash> hash value that should be translated back to a number.
 
 =back
 
-=head2 hash($number)
+=head2 hash
 
-alias for revhash.
+Just an object oriented alias for revhash: C<< $hash = $obj->hash($number) >>.
+All hash function parameters will be taken from the object itself.
 
-=head2 unhash($hash)
+=head2 unhash
 
-alias for revunhash.
+Just an object oriented alias for revunhash:
+C<< $number = $obj->unhash($hash) >>.
+All hash function parameters will be taken from the object itself.
 
-=head2 new($length, $A, $B, $C)
+=head2 new
 
-object constructor that checks and stores all the parameters inside new object.
+C<< $obj = Math::Revhash->new($length, $A, $B, $C) >> is an object constructor
+that will firstly check and vivify all the arguments and store them inside
+new object.
 
 =head1 UNSAFE MODE
 
 Arguments parsing and parameters auto-computing takes some time.
 There is an UNSAFE mode to speed up the whole process (see SYNOPSIS).
-In this mode all arguments becomes mandatory.
+In this mode all arguments become mandatory on C<revhash/revunhash> calls.
+You can either use OO style and still imply and check arguments on object
+creation, or use procedural style and specify each argument on every call.
 Use this mode with extra caution.
 
 =head1 AUTHOR
