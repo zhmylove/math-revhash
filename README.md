@@ -4,20 +4,22 @@ Math::Revhash - Reverse hash computation library
 
 # SYNOPSIS
 
-    use Math::Revhash qw( revhash revunhash );
+```perl
+use Math::Revhash qw( revhash revunhash );
 
-    # OO style
-    my $revhash = Math::Revhash->new( $length, $A, $B, $C );
-    my $hash = $revhash->hash( $number );
-    my $number = $revhash->unhash( $hash );
+# OO style
+my $revhash = Math::Revhash->new( $length, $A, $B, $C );
+my $hash = $revhash->hash( $number );
+my $number = $revhash->unhash( $hash );
 
-    # Procedural style
-    my $hash = revhash( $number, $length, $A, $B, $C );
-    my $hash = revhash( $number, 5 );
-    my $number = revunhash( $hash, $length, $A, $B, $C );
+# Procedural style
+my $hash = revhash( $number, $length, $A, $B, $C );
+my $hash = revhash( $number, 5 );
+my $number = revunhash( $hash, $length, $A, $B, $C );
 
-    # See UNSAFE MODE
-    $Math::Revhash::UNSAFE = 1;
+# See UNSAFE MODE
+$Math::Revhash::UNSAFE = 1;
+```
 
 # DESCRIPTION
 
@@ -47,9 +49,9 @@ Compute `$hash = revhash($number, $length, $A, $B, $C)`
 
 - `$number` is the source number to be hashed.
 - `$length` is required hash length in digits.
-- `$A` _(optional for pre-defined lengths)_
+- `$A` _(optional for pre-defined lengths)_ first parameter of hash
+function.
 
-    It is just a parameter of hash function.
     There are some hard-coded `$A` values for pre-defined lengths.
     You are free to specify any positive `$A` to customize the function.
     It is recommended to choose only primary numbers for `$A` to avoid possible
@@ -59,16 +61,16 @@ Compute `$hash = revhash($number, $length, $A, $B, $C)`
     `10 ** ($length + 1)`.
     You are encouraged to play around it on your own.
 
-- `$B` _(optional)_
+- `$B` _(optional)_ second parameter of hash function.
 
-    Second parameter of hash function. It is a modular inverse of `$A` and is
+    It is a modular inverse of `$A` and is
     being computed as `$B = Math::BigInt->bmodinv($A, 10 ** $length)` unless
     explicitly specified.
 
-- `$C` _(optional)_
+- `$C` _(optional)_ third parameter of hash function.
 
-    Third parameter of hash function. As our numbers are decimal it is just `10`
-    to the power of `$length`: `$C = 10 ** $length`.
+    As our numbers are decimal it is just `10` to the power of `$length`:
+    `$C = 10 ** $length`.
 
 ## revunhash
 

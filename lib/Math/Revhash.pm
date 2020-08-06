@@ -65,7 +65,7 @@ sub _argsparse {
     } else {
         $B = $AB->{$len}->[1];
     }
-    $B = Math::BigInt->bmodinv($A, $C) unless defined $B;
+    $B = Math::BigInt->new($A)->bmodinv($C) unless defined $B;
     croak "Invalid B value for such length and A" if Math::BigInt->is_nan($B);
 
     return ($data, $len, $A, $B, $C);
@@ -164,9 +164,9 @@ Compute C<$hash = revhash($number, $length, $A, $B, $C)>
 
 =item C<$length> is required hash length in digits.
 
-=item C<$A> I<(optional for pre-defined lengths)>
+=item C<$A> I<(optional for pre-defined lengths)> first parameter of hash
+function.
 
-It is just a parameter of hash function.
 There are some hard-coded C<$A> values for pre-defined lengths.
 You are free to specify any positive C<$A> to customize the function.
 It is recommended to choose only primary numbers for C<$A> to avoid possible
@@ -176,16 +176,16 @@ It is recommended to start with any primary number close to
 C<10 ** ($length + 1)>.
 You are encouraged to play around it on your own.
 
-=item C<$B> I<(optional)>
+=item C<$B> I<(optional)> second parameter of hash function.
 
-Second parameter of hash function. It is a modular inverse of C<$A> and is
+It is a modular inverse of C<$A> and is
 being computed as C<< $B = Math::BigInt->bmodinv($A, 10 ** $length) >> unless
 explicitly specified.
 
-=item C<$C> I<(optional)>
+=item C<$C> I<(optional)> third parameter of hash function.
 
-Third parameter of hash function. As our numbers are decimal it is just C<10>
-to the power of C<$length>: C<$C = 10 ** $length>.
+As our numbers are decimal it is just C<10> to the power of C<$length>:
+C<$C = 10 ** $length>.
 
 =back
 
