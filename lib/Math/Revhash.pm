@@ -113,7 +113,7 @@ __END__
 
 =head1 NAME
 
-Math::Revhash - Reversible hashes library
+Math::Revhash - Reverse hash computation library
 
 =head1 SYNOPSIS
 
