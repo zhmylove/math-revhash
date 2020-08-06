@@ -9,3 +9,5 @@ t/00-load.t
 t/1-basic.t
 t/2-oo.t
 t/3-args.t
+t/4-predefined.t
+t/5-unsafe.t
