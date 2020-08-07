@@ -35,11 +35,12 @@ without need for hash-table lookups, large memory storage and any other
 expensive mechanisms.
 
 So far, this module is only capable of translating positive non-zero integers.
-To use the module you can either choose one of existing hash lengths: 1..9, or
-specify any positive `$length` with non-default `$A` parameter (see below).
+To use the module you can either choose one of hash lengths: 1..9,
+for which all other parameters are pre-defined, or specify any positive
+`$length` with non-default `$A` parameter (see below).
 In any case `$number` for hashing should not exceed predefined hash length.
-`$B` parameter could also be specified to avoid extra modular inverse
-calculation.
+`$B` and `$C` parameters could also be specified to avoid extra modular
+inverse and power calculation, respectively.
 
 # SUBROUTINES
 
@@ -49,8 +50,8 @@ Compute `$hash = revhash($number, $length, $A, $B, $C)`
 
 - `$number` is the source number to be hashed.
 - `$length` is required hash length in digits.
-- `$A` _(optional for pre-defined lengths)_ first parameter of hash
-function.
+- `$A` _(optional for pre-defined lengths)_ is the first parameter of
+hash function.
 
     There are some hard-coded `$A` values for pre-defined lengths.
     You are free to specify any positive `$A` to customize the function.
@@ -61,13 +62,13 @@ function.
     `10 ** ($length + 1)`.
     You are encouraged to play around it on your own.
 
-- `$B` _(optional)_ second parameter of hash function.
+- `$B` _(optional)_ is the second parameter of hash function.
 
     It is a modular inverse of `$A` and is
     being computed as `$B = Math::BigInt->bmodinv($A, 10 ** $length)` unless
     explicitly specified.
 
-- `$C` _(optional)_ third parameter of hash function.
+- `$C` _(optional)_ is the third parameter of hash function.
 
     As our numbers are decimal it is just `10` to the power of `$length`:
     `$C = 10 ** $length`.
@@ -77,18 +78,18 @@ function.
 Compute `$number = revunhash($hash, $length, $A, $B, $C)`.
 It takes the same arguments as `revhash` besides:
 
-- `$hash` hash value that should be translated back to a number.
+- `$hash` is hash value that should be translated back to a number.
 
 ## hash
 
 Just an object oriented alias for revhash: `$hash = $obj->hash($number)`.
-All hash function parameters will be taken from the object itself.
+All the hash function parameters will be taken from the object itself.
 
 ## unhash
 
 Just an object oriented alias for revunhash:
 `$number = $obj->unhash($hash)`.
-All hash function parameters will be taken from the object itself.
+All the hash function parameters will be taken from the object itself.
 
 ## new
 
@@ -98,7 +99,8 @@ new object.
 
 # UNSAFE MODE
 
-Arguments parsing and parameters auto-computing takes some time.
+Arguments parsing and parameters auto-computing takes some time thus sometimes
+it would be preffered to avoid this phase on every translation operation.
 There is an UNSAFE mode to speed up the whole process (see SYNOPSIS).
 In this mode all arguments become mandatory on `revhash/revunhash` calls.
 You can either use OO style and still imply and check arguments on object

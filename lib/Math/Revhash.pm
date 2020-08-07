@@ -11,7 +11,7 @@ use Carp;
 use Exporter 'import';
 use Math::BigInt;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 $VERSION =~ tr/_//d;
 
 our @EXPORT_OK = qw( revhash revunhash );
@@ -146,11 +146,12 @@ without need for hash-table lookups, large memory storage and any other
 expensive mechanisms.
 
 So far, this module is only capable of translating positive non-zero integers.
-To use the module you can either choose one of existing hash lengths: 1..9, or
-specify any positive C<$length> with non-default C<$A> parameter (see below).
+To use the module you can either choose one of hash lengths: 1..9,
+for which all other parameters are pre-defined, or specify any positive
+C<$length> with non-default C<$A> parameter (see below).
 In any case C<$number> for hashing should not exceed predefined hash length.
-C<$B> parameter could also be specified to avoid extra modular inverse
-calculation.
+C<$B> and C<$C> parameters could also be specified to avoid extra modular
+inverse and power calculation, respectively.
 
 =head1 SUBROUTINES
 
@@ -164,8 +165,8 @@ Compute C<$hash = revhash($number, $length, $A, $B, $C)>
 
 =item C<$length> is required hash length in digits.
 
-=item C<$A> I<(optional for pre-defined lengths)> first parameter of hash
-function.
+=item C<$A> I<(optional for pre-defined lengths)> is the first parameter of
+hash function.
 
 There are some hard-coded C<$A> values for pre-defined lengths.
 You are free to specify any positive C<$A> to customize the function.
@@ -176,13 +177,13 @@ It is recommended to start with any primary number close to
 C<10 ** ($length + 1)>.
 You are encouraged to play around it on your own.
 
-=item C<$B> I<(optional)> second parameter of hash function.
+=item C<$B> I<(optional)> is the second parameter of hash function.
 
 It is a modular inverse of C<$A> and is
-being computed as C<< $B = Math::BigInt->bmodinv($A, 10 ** $length) >> unless
+being computed as C<$B = Math::BigInt-E<gt>bmodinv($A, 10 ** $length)> unless
 explicitly specified.
 
-=item C<$C> I<(optional)> third parameter of hash function.
+=item C<$C> I<(optional)> is the third parameter of hash function.
 
 As our numbers are decimal it is just C<10> to the power of C<$length>:
 C<$C = 10 ** $length>.
@@ -196,30 +197,31 @@ It takes the same arguments as C<revhash> besides:
 
 =over 4
 
-=item C<$hash> hash value that should be translated back to a number.
+=item C<$hash> is hash value that should be translated back to a number.
 
 =back
 
 =head2 hash
 
-Just an object oriented alias for revhash: C<< $hash = $obj->hash($number) >>.
-All hash function parameters will be taken from the object itself.
+Just an object oriented alias for revhash: C<$hash = $obj-E<gt>hash($number)>.
+All the hash function parameters will be taken from the object itself.
 
 =head2 unhash
 
 Just an object oriented alias for revunhash:
-C<< $number = $obj->unhash($hash) >>.
-All hash function parameters will be taken from the object itself.
+C<$number = $obj-E<gt>unhash($hash)>.
+All the hash function parameters will be taken from the object itself.
 
 =head2 new
 
-C<< $obj = Math::Revhash->new($length, $A, $B, $C) >> is an object constructor
+C<$obj = Math::Revhash-E<gt>new($length, $A, $B, $C)> is an object constructor
 that will firstly check and vivify all the arguments and store them inside
 new object.
 
 =head1 UNSAFE MODE
 
-Arguments parsing and parameters auto-computing takes some time.
+Arguments parsing and parameters auto-computing takes some time thus sometimes
+it would be preffered to avoid this phase on every translation operation.
 There is an UNSAFE mode to speed up the whole process (see SYNOPSIS).
 In this mode all arguments become mandatory on C<revhash/revunhash> calls.
 You can either use OO style and still imply and check arguments on object
@@ -228,7 +230,7 @@ Use this mode with extra caution.
 
 =head1 AUTHOR
 
-Sergei Zhmylev, C<< <zhmylove@cpan.org> >>
+Sergei Zhmylev, C<E<lt>zhmylove@cpan.orgE<gt>>
 
 =head1 BUGS
 
